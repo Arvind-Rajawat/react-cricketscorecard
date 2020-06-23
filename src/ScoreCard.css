@@ -1,0 +1,169 @@
+.main {
+    height: 100% !important;
+    min-height: 100vh !important;
+    /* min-width: 100vw !important; */
+    width: 100% !important;
+    background-color: white;
+}
+
+.scorecard {
+    background-color: lightgray;
+    padding: 10px;
+    -webkit-box-shadow: -1px 4px 55px 1px rgba(115, 115, 115, 1);
+    -moz-box-shadow: -1px 4px 55px 1px rgba(115, 115, 115, 1);
+    box-shadow: -1px 4px 55px 1px rgba(115, 115, 115, 1);
+    border: 1px solid darkgray;
+}
+
+.mainscore-score {
+    font-size: 2.8rem;
+    padding: 0px;
+    font-weight: bold;
+}
+
+.mainscore-score span {
+    font-size: 1.5rem;
+}
+
+.innings {
+    padding: 0px 0px 0px 0px;
+    font-size: 1.2rem;
+    /* max-width: 100%; */
+    /* display: inline; */
+}
+
+.batsman {
+    font-weight: bold;
+    padding: 10px;
+    background-color: darkgrey;
+}
+
+.bowler {
+    padding: 10px;
+    background-color: darkgrey;
+    font-weight: bold;
+}
+
+.striker {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+.bowlerstats {
+    padding: 10px;font-size: 1rem;
+}
+
+.options {
+    margin-top: 10px;
+    padding: 5px;
+    /* border: 1px solid darkgray; */
+}
+
+.option {
+    border: 1px solid darkgrey;
+    height: 100%;
+    background-color: burlywood;
+    cursor: pointer;
+    width: 20%;
+    display: inline-block;
+    text-align: center;
+    /* padding: 5px; */
+    /* margin: 5px; */
+    padding: 0.5rem;
+    margin: 0.5rem;
+}
+
+.info {
+    padding: 10px 10px 10px 25px;
+    font-weight: bold;
+    background-color: darkgrey;
+}
+
+.ballDesc {
+    height: 10rem;
+    width: 100%;
+}
+
+.sendButton {
+    height: 100%;
+    width: auto;
+    background-color: burlywood;
+    text-align: center;
+    color: black;
+    height: 10rem;
+    padding-left : 0px !important;
+    padding-right: 0px !important;
+    padding-top: 2rem;
+    font-size: 2rem;
+    cursor: pointer;
+    /* margin: 10px; */
+    margin-right: 10px;
+    margin-left: -10px;
+}
+
+.mymodal {
+    background-color: darkgray;
+    color: black;
+    /* width: 50vw; */
+    /* height: 30rem; */
+    /* width: 60rem; */
+    padding: 10px;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.modalHeader {
+    color: black;
+    padding: 10px;
+    font-size: 2.5rem;
+}
+
+.modalLink {
+    color: blue;
+    /* background-color: lightgray; */
+    padding: 10px;
+    width: 100%;
+    /* margin-left: 10px; */
+    /* margin-right: 10px; */
+}
+
+.matchLink {
+    background-color: lightgray;
+    padding: 1.5rem;
+}
+
+.modalCopy {
+    padding: 10px;
+}
+
+.nopadding {
+    padding: 0px !important;
+}
+
+.nomargin {
+    margin: 0px !important;
+}
+
+.blue{
+    background-color: darkblue !important;
+    color: white !important;
+}
+
+.bowlerSelect{
+    padding: 5px;
+}
+
+.bowlerSelect:hover{
+    background-color: darkblue;
+    color: white;
+}
+
+.bowlerSelectTitle{
+    background-color: darkgray;
+    padding: 5px;
+}
+
+.onlyTopPadding{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
