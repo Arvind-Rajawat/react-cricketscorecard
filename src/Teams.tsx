@@ -5,7 +5,6 @@ import ITeamDetails from './Interface/index';
 import  "./App.css";
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
-
 const useStyles = makeStyles(theme => ({ 
   textField: {    
       withWidth : "100%",
