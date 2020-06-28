@@ -1,10 +1,17 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect, SyntheticEvent} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, TextField,withWidth } from '@material-ui/core';
 import ITeamDetails from './Interface/index';
+import  {TeamDetailsWatcher}  from './actions';
+import { bindActionCreators, AnyAction, ActionCreatorsMapObject } from 'redux';
+import { connect } from "react-redux";
 import  "./App.css";
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
+import  appStore  from './configureStore';
+import  { RootState }  from './reducers';
+import {useDispatch} from 'react-redux';
+
 const useStyles = makeStyles(theme => ({ 
   textField: {    
       withWidth : "100%",
@@ -85,44 +92,39 @@ let TeamDetails: ITeamDetails = {
     
   }
 }
-export default function Teams() {
+
+ function Teams(props : typeof mapDispatchToProps) {
+ 
   const classes = useStyles();
   const [propsvalues, setState] = useState(TeamDetails)
-  const[loading,SetloadingState] = useState(false)  
+  const[loading,SetloadingState] = useState(false) 
+  const[btnState,SetbtnState] = useState(false)  
+  const dispatch = useDispatch()
   let history = useHistory();
 
-useEffect(() => { 
-  const connect = async () => {
-    const result = await axios(
-      'http://localhost:3001',
-    );    
-  };
-  connect();
-}, []);
+  let appState =  appStore.getState(); 
 
-  function startMatch(e : any)
-{ 
 
-     e.preventDefault(); 
-     //SetloadingState(!loading);
-     setAllFields();     
-     axios.post('http://localhost:3001/db',  propsvalues.newmatch,
-     {
-     headers: {
-      'Content-Type': 'application/json',
-    }}
-     )
-     .then(res => {     
-       //console.log(res.data);
-       //SetloadingState(loading);       
-       propsvalues.newmatch.id = res.data;       
-       history.push('/ScoreCard', propsvalues.newmatch); 
-     })
-    }
-  function setAllFields () {       
+  function startMatch(event : SyntheticEvent)
+   { 
+   
+     event.preventDefault();
+     setAllFields() ;
+    props.TeamDetailsWatcher(
+        {newmatch : propsvalues.newmatch}        
+     
+    );     
+    SetbtnState(true);
+  }
+  if(appState !== null && appState.reducermethod.redirect)
+  {   
+    history.push('/ScoreCard', propsvalues.newmatch); 
+  }
+  
+ function setAllFields() { 
+       
         var newmatch = propsvalues.newmatch;
-        newmatch.id = propsvalues.newmatch.id;
-        //setState({ newmatch: newmatch });
+        newmatch.id = propsvalues.newmatch.id;        
         newmatch.team[0].name =((document.getElementById("team1") as HTMLInputElement ).value);
         newmatch.team[1].name = ((document.getElementById("team2") as HTMLInputElement).value);
         newmatch.team[0].players[0].playerName = ((document.getElementById("1") as HTMLInputElement).value);
@@ -170,12 +172,13 @@ useEffect(() => {
         if(newmatch.currentBatting === 1){
             newmatch.currentBowling = 0;
         }else
-        newmatch.currentBowling = 1;
-        setState({ newmatch : newmatch });
+        newmatch.currentBowling = 1;       
       }
-
-  return (   
-    <div>       
+  return (       
+    <div> 
+       {/* <div className="row">
+       {props.newmatch.Toss}      
+    </div>       */}
     <div className="row mainTeamDetails" >
     <div className="row">
         <div className="col-lg-12 col-xs-12  ">
@@ -302,7 +305,20 @@ useEffect(() => {
         </Button>
         </div>       
     </div>
+   
 </div>
       </div>
   );
   }
+  const mapDispatchToProps = {
+    TeamDetailsWatcher : (formparams : ITeamDetails) => ({ type: 'TEAM_DETAILS', payload: formparams.newmatch })
+  }
+  
+  const mapStateToProps = (state: RootState) => { 
+     
+   return {      
+      newmatch : state
+   };
+  
+ };
+export default connect(mapStateToProps,mapDispatchToProps)(Teams);

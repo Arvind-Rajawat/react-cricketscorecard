@@ -1,10 +1,17 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect,SyntheticEvent} from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from "react-router-dom";
 import "./ScoreCard.css";
 import { Button,withWidth } from '@material-ui/core';
-
+import  appStore  from './configureStore';
+import  {StartOverWatcher}  from './actions';
+import { bindActionCreators, AnyAction } from 'redux';
+import { connect } from "react-redux";
+import  rootReducer,{ RootState }  from './reducers';
+import ITeamDetails from './Interface/index';
+import {useDispatch} from 'react-redux';
+import { TeamActionTypes } from './Interface/types';
 const useStyles = makeStyles(theme => ({ 
   button: { 
     withWidth: "33.3%",
@@ -14,34 +21,118 @@ const useStyles = makeStyles(theme => ({
 },
 }));
 
-export default function ScoreCard(props: any) { 
-  
+let TeamDetails: ITeamDetails = {
+  newmatch: { 
+    id:"",       
+    startedBy: 1,
+    toss: 0,
+    currentBatting: 0,
+    maxBalls: 0,
+    currentBowling : 0,
+    status :"",
+    balls: [
+      {ballNumber: 0, ballDesc: "No ball has been bowled yet"},
+    ],
+    team: [
+      {
+        name: "",
+        score: 0,
+        ballsPlayed: 0,
+        runRate: 0,
+        currentStriker: 0,
+        currentNonStriker: 0,
+        currentBowler: 0,
+        wickets:0,
+        preBowler: 0,
+        players : [
+          {playerNumber: 1,playerName: "Player 1", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 2,playerName: "Player 2", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 3,playerName: "Player 3", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 4,playerName: "Player 4", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 5,playerName: "Player 5", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 6,playerName: "Player 6", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 7,playerName: "Player 7", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 8,playerName: "Player 8", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 9,playerName: "Player 9", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 10,playerName: "Player 10", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 11,playerName: "Player 11", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+        ]
+      },
+      {
+        name: "",
+        score: 0,
+        ballsPlayed: 0,
+        runRate: 0,
+        currentStriker: 0,
+        currentNonStriker: 0,
+        currentBowler: 0,
+        wickets:0,
+        preBowler: 0,
+        players : [
+          {playerNumber: 1,playerName: "Player 1", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 2,playerName: "Player 2", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 3,playerName: "Player 3", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 4,playerName: "Player 4", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 5,playerName: "Player 5", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 6,playerName: "Player 6", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 7,playerName: "Player 7", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 8,playerName: "Player 8", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 9,playerName: "Player 9", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 10,playerName: "Player 10", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+          {playerNumber: 11,playerName: "Player 11", runsScored : 0, fours: 0, sixes: 0, ballsFaced: 0, wickets: 0, ballsBowled: 0,runsGiven: 0, maidens: 0, out: 0},
+        ]
+      }
+    ]
+    
+  }
+}
+
+ function ScoreCard(props : typeof mapDispatchToProps) {  
+  let history = useHistory();
   const classes = useStyles();  
-  let [match, setMatchState] = useState(props.location.state)
-  let [startOver, setstartOver] = useState(false) 
+  let [match, setMatchState] = useState(TeamDetails.newmatch) 
+  let [startOver, setstartOver] = useState(false)   
   let [buttonState, setButton] = useState(false)
   const [pagevariable,setState] = useState({    
     loading: false,
     currentOvers : 0.0, 
     
-  }) 
-  let history = useHistory(); 
-  useEffect(() => {    
-  
-    axios.get("http://localhost:3001/db/" + match.id
-    ).then(res => {
-     
-      console.log("inside use effect " + new Date());      
-       setMatchState((prevState : any) => {
-        return { ...prevState,          
-          match: res.data}
-         
-      });     
-    }).catch(err => {
-      window.alert("wrong match id");
-      history.goBack();
-    });    
-  },[]);
+  })
+  const dispatch = useDispatch()
+  let appState = appStore.getState(); 
+  if(TeamDetails.newmatch.id === '' ||  TeamDetails.newmatch.id === 'undefined')
+  {    
+    TeamDetails.newmatch = appState.reducermethod.TeamDetails;        
+  }  
+let FirstStrikeRate = (match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].runsScored / match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].ballsFaced * 100).toFixed(2);
+if(isNaN(Number(FirstStrikeRate)))
+{
+  FirstStrikeRate = "0";
+}
+else
+{
+  FirstStrikeRate = (match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].runsScored / match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].ballsFaced * 100).toFixed(2);
+}
+
+let SecondStrikeRate = (match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].runsScored / match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].ballsFaced * 100).toFixed(2);
+if(isNaN(Number(SecondStrikeRate)))
+{
+  SecondStrikeRate = "0";
+}
+else
+{
+  SecondStrikeRate = (match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].runsScored / match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].ballsFaced * 100).toFixed(2);
+}
+
+let RunRate = ((match.team[match.currentBatting].score /match.team[match.currentBatting].ballsPlayed)*6).toFixed(2);
+if(isNaN(Number(RunRate)))
+{
+  RunRate = "0";
+}
+else
+{
+  RunRate = ((match.team[match.currentBatting].score /match.team[match.currentBatting].ballsPlayed)*6).toFixed(2);
+}
 
   const balling = (num: number) => {    
    debugger;
@@ -127,7 +218,8 @@ export default function ScoreCard(props: any) {
     });
   };
 
-function startover() { 
+function startover(e : SyntheticEvent) {
+
 setTimeout(() => {
        setButton(true)
 }, 500);    
@@ -147,19 +239,20 @@ if(timesRun === 6){
      setTimeout(() => {     
       setstartOver(true);
    }, 500);
-  }
-}, 2000);
+  }  
+  props.StartOverWatcher(
+    {newmatch : match}   
+ );
+}, 3000);
 }
 
   useEffect(() => {
     if(startOver)
     {
-    const timer = setTimeout(() => {
-      console.log("For update " + JSON.stringify(match));
+    const timer = setTimeout(() => {     
       axios.put("http://localhost:3001/db/" + match.id, match)
       .then(res => {     
-      console.log(" Updated useEffect " + JSON.stringify(res.data));
-        setMatchState((prevState : any) => {
+          setMatchState((prevState : any) => {
           return { ...prevState,          
             match: res.data
           }        
@@ -211,7 +304,8 @@ if(timesRun === 6){
                       match ? Math.floor(match.team[match.currentBatting].ballsPlayed /6 ): "NA"
                     }.{
                       match ? match.team[match.currentBatting].ballsPlayed %6 : "NA"
-                    }) <br className="visible-xs"/>Rr: {match ? ((match.team[match.currentBatting].score /match.team[match.currentBatting].ballsPlayed)*6).toFixed(2) : '' } </span>
+                    }) <br className="visible-xs"/>Rr: {match ? RunRate : '' } </span>
+                    
                                      
                     <Button
          variant="contained"
@@ -222,7 +316,7 @@ if(timesRun === 6){
           > Start Over
        </Button>  
                   </div>
-                  <div className="row innings">Match Id: {match? match.id : ""}</div>
+                  {/* <div className="row innings">Match Id: {match? match.id : ""}</div> */}
                   <div className="row innings">{match? match.status : ""}</div>
                 </div>
               </div>
@@ -244,7 +338,7 @@ if(timesRun === 6){
                 <div className="col-lg-1 col-sm-1  col-xs-1 onlyTopPadding">{match? match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].ballsFaced: ""}</div>
                 <div className="col-lg-1 col-sm-1  col-xs-1 onlyTopPadding">{match? match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].fours: ""}</div>
                 <div className="col-lg-1 col-sm-1  col-xs-1 onlyTopPadding">{match? match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].sixes: ""}</div>
-                <div className="col-lg-2 col-sm-2  col-xs-2 onlyTopPadding">{match? (match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].runsScored / match.team[match.currentBatting].players[match.team[match.currentBatting].currentStriker].ballsFaced * 100).toFixed(2) : "" }</div>
+                <div className="col-lg-2 col-sm-2  col-xs-2 onlyTopPadding">{match? FirstStrikeRate : "" }</div>
               </div>
               <div className="row striker onlyTopPadding">
                 <div className="col-lg-6 col-sm-6  col-xs-6 onlyTopPadding">{match? match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].playerName: ""}</div>
@@ -252,7 +346,7 @@ if(timesRun === 6){
                 <div className="col-lg-1 col-sm-1  col-xs-1 onlyTopPadding">{match? match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].ballsFaced: ""}</div>
                 <div className="col-lg-1 col-sm-1  col-xs-1 onlyTopPadding">{match? match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].fours: ""}</div>
                 <div className="col-lg-1 col-sm-1  col-xs-1 onlyTopPadding">{match? match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].sixes: ""}</div>
-                <div className="col-lg-2 col-sm-2  col-xs-2 onlyTopPadding">{match? (match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].runsScored / match.team[match.currentBatting].players[match.team[match.currentBatting].currentNonStriker].ballsFaced * 100).toFixed(2) : "" }</div>
+                <div className="col-lg-2 col-sm-2  col-xs-2 onlyTopPadding">{match? SecondStrikeRate : "" }</div>
               </div>
               <div className="row bowler">
                 <div className="col-lg-6 col-sm-6  col-xs-6 onlyTopPadding">BOWLER &nbsp;
@@ -295,6 +389,18 @@ if(timesRun === 6){
         </div>       
       </div>      
     );
+    
+  
+}
+const mapDispatchToProps = {
+  StartOverWatcher : (formparams : ITeamDetails) => ({ type: 'START_OVER', payload: formparams.newmatch })
 }
 
+const mapStateToProps = (state: RootState) => {
+  
+ return {    
+    newmatch : state
+ };
+};
+export default connect(mapStateToProps,mapDispatchToProps)(ScoreCard);
 
